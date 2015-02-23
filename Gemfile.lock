@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    awesome_print (1.6.1)
+    rack (1.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  rack
