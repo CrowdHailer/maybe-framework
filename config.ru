@@ -54,7 +54,14 @@ class BaseApp
   def self.fin
     ->(request, env){
       request.path_info.match(/\A\/{0,1}\z/)
+    }
+  end
 
+  def self.splat
+    ->(request, env){
+      remainder = request.path_info
+      request.path_info = ''
+      remainder
     }
   end
 
@@ -95,11 +102,18 @@ class BaseApp
 end
 
 class App < BaseApp
-  on get?, segment, params(:user), fin do |_, segment, user|
-    ap "segment #{segment}"
+  on get?, segment, params(:user), fin do |_, matched_segment, user|
+    ap "matched_segment #{matched_segment}"
     ap "params #{user}"
     [200, {}, ['about']]
   end
+
+  on get?, segment, splat do |_, segment, splat|
+    ap "segment #{segment}"
+    ap "splat  #{splat}"
+    [200, {}, ['aplatty']]
+  end
+
   on post? do |_|
     [200, {}, ['hello post']]
   end
