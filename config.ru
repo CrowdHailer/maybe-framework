@@ -35,6 +35,7 @@ class BaseApp
 
   def self.get?
     ->(request, env){
+      ap request.env == env
       request.get?
     }
   end
@@ -46,8 +47,10 @@ class BaseApp
   end
 
   def self.params(item)
-    ->(request, env){
-      request.params[item.to_s]
+    ->(request, env, &blk){
+      result = request.params[item.to_s]
+      blk.call(result)
+      result
     }
   end
 
@@ -58,21 +61,22 @@ class BaseApp
   end
 
   def self.splat
-    ->(request, env){
+    ->(request, env, &blk){
       remainder = request.path_info
       request.path_info = ''
+      blk.call(remainder)
       remainder
     }
   end
 
   def self.segment(pattern='[^\/]+')
-    ->(request, env){
+    ->(request, env, &blk){
       matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)
       return false unless matchdata
       segment, tail = matchdata.captures
       request.path_info = tail + matchdata.post_match
-      ap tail
-      ap segment
+      blk.call(segment)
+      segment
     }
   end
 
@@ -80,9 +84,11 @@ class BaseApp
     request = Rack::Request.new(env)
     self.class.routes.each do |conditions, action|
       # ap conditions
-      captures = conditions.map{|part| part.call(request, env)}
+      nork = []
+      captures = conditions.map{|part| part.call(request, env) {|a| nork << a}}
+      ap nork
       if captures.all?
-        return action.call(*captures)
+        return action.call(*nork)
       end
     end
     @app.call(env)
@@ -102,7 +108,7 @@ class BaseApp
 end
 
 class App < BaseApp
-  on get?, segment, params(:user), fin do |_, matched_segment, user|
+  on get?, segment, params(:user), fin do |matched_segment, user|
     ap "matched_segment #{matched_segment}"
     ap "params #{user}"
     [200, {}, ['about']]
