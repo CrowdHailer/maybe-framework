@@ -17,6 +17,7 @@ class InitialTest < MiniTest::Test
     @app = App
     get '/'
     assert_equal 200, last_response.status
+    assert_equal 'Hello World', last_response.body
   end
 
   def test_no_request_before_dup

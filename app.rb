@@ -24,7 +24,7 @@ class Sandwitch
 
   def new(request, response)
     clone.tap do |copy|
-      
+
       copy.define_singleton_method :request do
         request
       end
@@ -40,19 +40,37 @@ class Sandwitch
   end
 
   def respond
-    nil
+    # ap self.class.routes
+    self.class.routes.each do |conditions, action|
+      captures = conditions.map{|part| part.call(request)}
+      if captures.all?
+        self.instance_exec *captures, &action
+        return response
+      end
+    end
+    return nil
+  end
+
+  def self.on(*args, &action)
+    routes << [args, action]
+  end
+
+  def self.routes
+    @routes ||= []
+  end
+
+  def self.get?
+    ->(request){
+      request.get?
+    }
   end
 
 end
 
 class App < Sandwitch
-  def respond
-    response
+  on get? do |a|
+    ap a
+    response.body = ['Hello World']
   end
-
-  # on get, segment('') do |path|
-  #   response.body = 'hello'
-  # end
-
 
 end
