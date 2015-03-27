@@ -24,12 +24,12 @@ class Sandwitch
 
   def new(request, response)
     clone.tap do |copy|
-
-      def copy.request
+      
+      copy.define_singleton_method :request do
         request
       end
 
-      def copy.response do
+      copy.define_singleton_method :response do
         response
       end
     end
