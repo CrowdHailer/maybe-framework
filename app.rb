@@ -6,6 +6,10 @@ end
 
 
 class Sandwitch
+  Request = Class.new(Rack::Request)
+  Response = Class.new(Rack::Response)
+  UndefinedRequest = Class.new(StandardError)
+
   def initialize(app = NotFound)
     @app = app
   end
@@ -14,18 +18,25 @@ class Sandwitch
     new.call(env)
   end
 
+  def request
+    raise UndefinedRequest, 'There is no request object available'
+  end
+
+  def new(request, response)
+    clone.tap do |copy|
+
+      def copy.request
+        request
+      end
+
+      def copy.response do
+        response
+      end
+    end
+  end
+
   def call(env)
-    copy = clone
-
-    copy.define_singleton_method :request do
-      Rack::Request.new(env)
-    end
-
-    copy.define_singleton_method :response do
-      Rack::Response.new
-    end
-
-    copy.respond || @app.call(env)
+    new(Request.new(env), Response.new).respond || @app.call(env)
   end
 
   def respond
@@ -36,6 +47,12 @@ end
 
 class App < Sandwitch
   def respond
-    [200, {}, ['about']]
+    response
   end
+
+  # on get, segment('') do |path|
+  #   response.body = 'hello'
+  # end
+
+
 end

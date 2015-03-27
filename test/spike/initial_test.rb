@@ -18,4 +18,16 @@ class InitialTest < MiniTest::Test
     get '/'
     assert_equal 200, last_response.status
   end
+
+  def test_no_request_before_dup
+    assert_raises Sandwitch::UndefinedRequest do
+      Sandwitch.new.request
+    end
+  end
+
+  # def test_ideal
+  #   context = Context.new(mock_request, mock_response)
+  #   context.respond
+  #
+  # end
 end
