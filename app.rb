@@ -4,32 +4,33 @@ Dir[APP_ROOT + '/lib/*.rb'].each {|file| require file }
 class Sandwitch
   Request = Class.new(Rack::Request)
   Response = Class.new(Rack::Response)
+  # Angry reader
   UndefinedRequest = Class.new(StandardError)
+  UndefinedRespone = Class.new(StandardError)
 
   def initialize(app = NotFound)
     @app = app
   end
 
   attr_reader :app
+  attr_writer :request, :response
 
   def self.call(env)
     new.call(env)
   end
 
+  def response
+    @response || (raise UndefinedRespone, 'There is no response object available')
+  end
+
   def request
-    raise UndefinedRequest, 'There is no request object available'
+    @request || (raise UndefinedRequest, 'There is no request object available')
   end
 
   def new(request, response)
     clone.tap do |copy|
-
-      copy.define_singleton_method :request do
-        request
-      end
-
-      copy.define_singleton_method :response do
-        response
-      end
+      copy.request = request
+      copy.response = response
     end
   end
 
