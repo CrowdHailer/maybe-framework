@@ -3,6 +3,31 @@ Dir[File.expand_path('../lib/*.rb', __FILE__)].each {|file| require file }
 class Sandwitch
   extend AngryAccessor
 
+  class << self
+    def call(env)
+      new.call(env)
+    end
+
+    def on(*args, &action)
+      routes << [args, action]
+    end
+
+    def routes
+      @routes ||= []
+    end
+
+    def method_missing(meth, *args, &block)
+      begin
+        matcher = Matchers.send(meth.capitalize)
+        ->(request){
+          matcher.new(request).match?
+        }
+      rescue NameError
+        super
+      end
+    end
+  end
+
   def initialize(app = NotFound)
     @app = app
   end
@@ -10,9 +35,6 @@ class Sandwitch
   attr_writer :request, :response
   attr_fetcher :request, :response, :app
 
-  def self.call(env)
-    new.call(env)
-  end
 
   def new(request, response)
     clone.tap do |copy|
@@ -44,25 +66,6 @@ class Sandwitch
       if m.match_all?
         self.instance_exec *match.captures, &action
       end
-    end
-  end
-
-  def self.on(*args, &action)
-    routes << [args, action]
-  end
-
-  def self.routes
-    @routes ||= []
-  end
-
-  def self.method_missing(meth, *args, &block)
-    begin
-      matcher = Matchers.send(meth.capitalize)
-      ->(request){
-        matcher.new(request).match?
-      }
-    rescue NameError
-      super
     end
   end
 end
