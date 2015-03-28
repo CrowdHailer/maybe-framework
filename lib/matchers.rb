@@ -81,6 +81,9 @@ module Matchers
         matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)
         return false unless matchdata
         segment, tail = matchdata.captures
+        # ap segment
+        # ap tail
+        yield segment unless pattern.is_a?(String)
         request.path_info = tail + matchdata.post_match
       end
 
@@ -106,7 +109,11 @@ module Matchers
       attr_reader :request
 
       def match?
-        matchers.map{|m| m.new(request)}.all?(&:match?)
+        matchers.map{|m| m.new(request)}.all?{|m| m.match?{|i| captures << i}}
+      end
+
+      def captures
+        @captures ||= []
       end
 
       define_method :matchers do
@@ -114,21 +121,4 @@ module Matchers
       end
     end
   end
-  # const_set :Segment, method(:Segment)
-
-  # class Segment
-  #
-  #   def match?
-  #     def self.segment(pattern='[^\/]+')
-  #       ->(request){
-  #         matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)
-  #         return false unless matchdata
-  #         segment, tail = matchdata.captures
-  #         request.path_info = tail + matchdata.post_match
-  #         # ap tail
-  #         # ap segment
-  #       }
-  #     end
-  #   end
-  # end
 end

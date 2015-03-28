@@ -52,7 +52,7 @@ class Sandwitch
     routes.each do |matcher, action|
       group_matcher = matcher.new(request)
       if group_matcher.match?
-        self.instance_exec *['3'], &action
+        self.instance_exec *group_matcher.captures, &action
         return response
       end
     end

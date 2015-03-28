@@ -22,7 +22,7 @@ class Rest < Sandwitch
     response.body = ['new page']
   end
 
-  on get, segment(/(\d+)/) do |id|
+  on get, segment(/\d+/) do |id|
     response['X-item-id'] = id
   end
 
