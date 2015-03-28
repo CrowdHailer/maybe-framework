@@ -69,7 +69,7 @@ class Sandwitch
 
   def self.method_missing(meth, *args, &block)
     begin
-      matcher = Matchers.const_get(meth.capitalize)
+      matcher = Matchers.send(meth.capitalize)
       ->(request){
         matcher.new(request).match?
       }
@@ -78,16 +78,7 @@ class Sandwitch
     end
   end
 
-  def self.segment(pattern='[^\/]+')
-    ->(request){
-      matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)
-      return false unless matchdata
-      segment, tail = matchdata.captures
-      request.path_info = tail + matchdata.post_match
-      # ap tail
-      # ap segment
-    }
-  end
+
 
 end
 

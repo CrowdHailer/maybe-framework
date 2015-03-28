@@ -37,7 +37,7 @@ class InitialTest < MiniTest::Test
     err = assert_raises NoMethodError do
       App.pointless
     end
-    ap err.cause
+    # ap err.cause
   end
 
   # def test_ideal
