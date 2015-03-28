@@ -1,4 +1,3 @@
-require_relative '../angry_accessor'
 module Sandwitch
   class Controller
     extend AngryAccessor
