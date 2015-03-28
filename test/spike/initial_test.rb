@@ -25,12 +25,19 @@ class InitialTest < MiniTest::Test
       Sandwitch.new.request
     end
   end
-  
+
   def test_head_no_body
     @app = App
     head '/'
     assert_equal 200, last_response.status
     assert_equal '', last_response.body
+  end
+
+  def test_method_missing_when_no_matcher
+    err = assert_raises NoMethodError do
+      App.pointless
+    end
+    ap err.cause
   end
 
   # def test_ideal

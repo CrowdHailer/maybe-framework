@@ -68,10 +68,14 @@ class Sandwitch
   end
 
   def self.method_missing(meth, *args, &block)
-    matcher = Matchers.const_get(meth.capitalize)
-    ->(request){
-      matcher.new(request).match?
-    }
+    begin
+      matcher = Matchers.const_get(meth.capitalize)
+      ->(request){
+        matcher.new(request).match?
+      }
+    rescue NameError
+      super
+    end
   end
 
   def self.segment(pattern='[^\/]+')

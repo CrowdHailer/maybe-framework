@@ -1,4 +1,10 @@
 module Matchers
+  # def self.fetch(name)
+  #   name = name.capitalize
+  #   if const_defined? name
+  #     const_get name
+  #   end
+  # end
   def self.Method(*request_methods)
     request_methods = request_methods.map(&:to_s).map(&:upcase)
     Class.new do
