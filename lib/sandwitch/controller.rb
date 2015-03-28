@@ -39,14 +39,17 @@ module Sandwitch
       end
     end
 
+    # TODO test
     def call(env)
       new(Request.new(env), Response.new).respond || app.call(env)
     end
 
+    # TODO test
     def routes
       self.class.routes
     end
 
+    # TODO test
     def respond
       routes.each do |matcher, action|
         group_matcher = matcher.new(request)
