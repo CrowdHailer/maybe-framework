@@ -107,6 +107,17 @@ class Sandwitch
     }
   end
 
+  def self.segment(pattern='[^\/]+')
+    ->(request){
+      matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)
+      return false unless matchdata
+      segment, tail = matchdata.captures
+      request.path_info = tail + matchdata.post_match
+      # ap tail
+      # ap segment
+    }
+  end
+
 end
 
 module Matchers

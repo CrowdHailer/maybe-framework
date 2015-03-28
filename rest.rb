@@ -15,8 +15,11 @@ class Rest < Sandwitch
   end
 
   on options, root do
-    response.status = 200
     response['Allow'] = ['GET', 'HEAD']
+  end
+
+  on get, segment('new') do
+    response.body = ['new page']
   end
 
 

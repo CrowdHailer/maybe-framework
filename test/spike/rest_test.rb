@@ -23,4 +23,9 @@ class RestTest < MiniTest::Test
     assert_equal 200, last_response.status
     assert_equal "GET\nHEAD", last_response.headers['Allow']
   end
+
+  def test_new_returns_page
+    get '/new'
+    assert_equal 200, last_response.status
+  end
 end

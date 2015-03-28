@@ -64,8 +64,8 @@ class BaseApp
       return false unless matchdata
       segment, tail = matchdata.captures
       request.path_info = tail + matchdata.post_match
-      ap tail
-      ap segment
+      # ap tail
+      # ap segment
     }
   end
 
