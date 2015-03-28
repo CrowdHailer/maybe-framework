@@ -1,4 +1,4 @@
-require './app'
+require './lib/sandwitch'
 
 class Rest < Sandwitch
   def render(arg)
