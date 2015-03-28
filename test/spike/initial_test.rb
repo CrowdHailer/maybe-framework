@@ -29,6 +29,7 @@ class InitialTest < MiniTest::Test
   def test_head_no_body
     @app = App
     head '/'
+    assert_equal 200, last_response.status
     assert_equal '', last_response.body
   end
 

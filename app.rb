@@ -41,9 +41,12 @@ class Sandwitch
     new(Request.new(env), Response.new).respond || app.call(env)
   end
 
+  def routes
+    self.class.routes
+  end
+
   def respond
-    # ap self.class.routes
-    self.class.routes.each do |conditions, action|
+    routes.each do |conditions, action|
       captures = conditions.map{|part| part.call(request)}
       if captures.all?
         self.instance_exec *captures, &action
@@ -51,6 +54,13 @@ class Sandwitch
       end
     end
     return nil
+
+    routes.each do |matcher, action|
+      m = matcher.new(request)
+      if m.match_all?
+        self.instance_exec *match.captures, &action
+      end
+    end
   end
 
   def self.on(*args, &action)
@@ -73,15 +83,35 @@ class Sandwitch
     }
   end
 
+  def self.get
+    ->(request){
+      Matchers::Get.new(request).match?
+    }
+  end
+
+end
+
+module Matchers
+  class Get
+    def initialize(request)
+      @request = request
+    end
+
+    attr_reader :request
+
+    def match?
+      request.get?
+    end
+  end
 end
 
 class App < Sandwitch
-  on get? do |a|
+  on get do
     response.body = ['Hello World']
   end
 
   on head? do |a|
-    
+
   end
 
 end
