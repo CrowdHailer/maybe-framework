@@ -93,8 +93,8 @@ class App < Sandwitch
     response.body = ['Hello World']
   end
 
-  # on head do |a|
-  #
-  # end
+  on head do
+
+  end
 
 end

@@ -28,6 +28,7 @@ module Matchers
   Get = Method :get
   Delete = Method :delete
   Options = Method :options
+  Head = Method :head
   class Root
     def initialize(request)
       @request = request
