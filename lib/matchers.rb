@@ -1,29 +1,17 @@
 module Matchers
-  # def self.fetch(name)
-  #   name = name.capitalize
-  #   if const_defined? name
-  #     const_get name
-  #   end
-  # end
+  class Abstract
+    def initialize(request)
+      @request = request
+    end
+
+    attr_reader :request
+    # separate match path and params etc
+  end
   def self.Method(*request_methods)
     request_methods = request_methods.map(&:to_s).map(&:upcase)
-    Class.new do
-      def initialize(request)
-        @request = request
-      end
-
-      attr_reader :request
-
+    Class.new(Abstract) do
       def match?
         request_methods.include? request.request_method
-      end
-
-      def match_path
-        true
-      end
-
-      def match_params
-        true
       end
 
       define_method :request_methods do
@@ -50,12 +38,7 @@ module Matchers
   Delete = Method :delete
   Options = Method :options
   Head = Method :head
-  class Root
-    def initialize(request)
-      @request = request
-    end
-
-    attr_reader :request
+  class Root < Abstract
 
     def match?
       match_path
@@ -64,19 +47,9 @@ module Matchers
     def match_path
       request.path_info == '/'
     end
-
-    def match_params
-      true
-    end
   end
   def self.Segment(pattern='[^\/]+')
-    Class.new do
-      def initialize(request)
-        @request = request
-      end
-
-      attr_reader :request
-
+    Class.new(Abstract) do
       def match?
         matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)
         return false unless matchdata
@@ -91,22 +64,13 @@ module Matchers
         request.path_info == '/'
       end
 
-      def match_params
-        true
-      end
-
       define_method :pattern do
         pattern
       end
     end
   end
   def self.Group(*matchers)
-    Class.new do
-      def initialize(request)
-        @request = request
-      end
-
-      attr_reader :request
+    Class.new(Abstract) do
 
       def match?
         matchers.map{|m| m.new(request)}.all?{|m| m.match?{|i| captures << i}}
