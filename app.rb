@@ -1,6 +1,28 @@
 APP_ROOT = File.expand_path('../', __FILE__)
 Dir[APP_ROOT + '/lib/*.rb'].each {|file| require file }
 
+module Matchers
+  class Get
+    def initialize(request)
+      @request = request
+    end
+
+    attr_reader :request
+
+    def match?
+      request.get?
+    end
+
+    def match_path
+      true
+    end
+
+    def match_params
+      true
+    end
+  end
+end
+
 class Sandwitch
   Request = Class.new(Rack::Request)
   Response = Class.new(Rack::Response)
@@ -60,6 +82,7 @@ class Sandwitch
   end
 
   def self.on(*args, &action)
+
     routes << [args, action]
   end
 
@@ -67,21 +90,10 @@ class Sandwitch
     @routes ||= []
   end
 
-  def self.get?
+  def self.method_missing(meth, *args, &block)
+    matcher = Matchers.const_get(meth.capitalize)
     ->(request){
-      request.get?
-    }
-  end
-
-  def self.head?
-    ->(request){
-      request.head?
-    }
-  end
-
-  def self.get
-    ->(request){
-      Matchers::Get.new(request).match?
+      matcher.new(request).match?
     }
   end
 
@@ -116,35 +128,14 @@ class Sandwitch
 
 end
 
-module Matchers
-  class Get
-    def initialize(request)
-      @request = request
-    end
-
-    attr_reader :request
-
-    def match?
-      request.get?
-    end
-
-    def match_path
-      true
-    end
-
-    def match_params
-      true
-    end
-  end
-end
 
 class App < Sandwitch
   on get do
     response.body = ['Hello World']
   end
 
-  on head? do |a|
-
-  end
+  # on head do |a|
+  #
+  # end
 
 end
