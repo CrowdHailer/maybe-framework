@@ -74,13 +74,6 @@ class Sandwitch
     }
   end
 
-  def self.root
-    ->(request){
-      request.path_info == '/'
-    }
-  end
-
-
   def self.segment(pattern='[^\/]+')
     ->(request){
       matchdata = request.path_info.match(/\A\/(#{pattern})(\/|\z)/)

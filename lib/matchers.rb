@@ -28,4 +28,23 @@ module Matchers
   Get = Method :get
   Delete = Method :delete
   Options = Method :options
+  class Root
+    def initialize(request)
+      @request = request
+    end
+
+    attr_reader :request
+
+    def match?
+      match_path
+    end
+
+    def match_path
+      request.path_info == '/'
+    end
+
+    def match_params
+      true
+    end
+  end
 end
