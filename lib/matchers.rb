@@ -60,10 +60,6 @@ module Matchers
         request.path_info = tail + matchdata.post_match
       end
 
-      def match_path
-        request.path_info == '/'
-      end
-
       define_method :pattern do
         pattern
       end
