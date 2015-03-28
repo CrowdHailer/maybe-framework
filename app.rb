@@ -1,9 +1,5 @@
-class NotFound
-  def self.call(env)
-    [404, {}, ['Not Found']]
-  end
-end
-
+APP_ROOT = File.expand_path('../', __FILE__)
+Dir[APP_ROOT + '/lib/*.rb'].each {|file| require file }
 
 class Sandwitch
   Request = Class.new(Rack::Request)
