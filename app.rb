@@ -18,10 +18,10 @@ class Sandwitch
 
     def method_missing(meth, *args, &block)
       begin
-        matcher = Matchers.send(meth.capitalize)
-        ->(request){
-          matcher.new(request).match?
-        }
+        matcher = Matchers.send(meth.capitalize, *args)
+        # ->(request){
+        #   matcher.new(request).match?
+        # }
       rescue NameError
         super
       end
@@ -53,9 +53,11 @@ class Sandwitch
 
   def respond
     routes.each do |conditions, action|
-      captures = conditions.map{|part| part.call(request)}
-      if captures.all?
-        self.instance_exec *captures, &action
+      group_matcher = Matchers.Group(*conditions).new(request)
+      # ap group_matcher.match?
+      # captures = conditions.map{|part| part.call(request)}
+      if group_matcher.match?
+        self.instance_exec *[], &action
         return response
       end
     end

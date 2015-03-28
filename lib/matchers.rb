@@ -97,6 +97,23 @@ module Matchers
       end
     end
   end
+  def self.Group(*matchers)
+    Class.new do
+      def initialize(request)
+        @request = request
+      end
+
+      attr_reader :request
+
+      def match?
+        matchers.map{|m| m.new(request)}.all?(&:match?)
+      end
+
+      define_method :matchers do
+        matchers
+      end
+    end
+  end
   # const_set :Segment, method(:Segment)
 
   # class Segment
