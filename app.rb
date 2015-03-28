@@ -2,25 +2,35 @@ APP_ROOT = File.expand_path('../', __FILE__)
 Dir[APP_ROOT + '/lib/*.rb'].each {|file| require file }
 
 module Matchers
-  class Get
-    def initialize(request)
-      @request = request
-    end
+  def self.Method(*request_methods)
+    request_methods = request_methods.map(&:to_s).map(&:upcase)
+    Class.new do
+      def initialize(request)
+        @request = request
+      end
 
-    attr_reader :request
+      attr_reader :request
 
-    def match?
-      request.get?
-    end
+      def match?
+        request_methods.include? request.request_method
+      end
 
-    def match_path
-      true
-    end
+      def match_path
+        true
+      end
 
-    def match_params
-      true
+      def match_params
+        true
+      end
+
+      define_method :request_methods do
+        request_methods
+      end
     end
   end
+  Get = Method :get
+  Delete = Method :delete
+  Options = Method :options
 end
 
 class Sandwitch
@@ -82,7 +92,6 @@ class Sandwitch
   end
 
   def self.on(*args, &action)
-
     routes << [args, action]
   end
 
@@ -103,17 +112,6 @@ class Sandwitch
     }
   end
 
-  def self.delete
-    ->(request){
-      request.delete?
-    }
-  end
-
-  def self.options
-    ->(request){
-      request.options?
-    }
-  end
 
   def self.segment(pattern='[^\/]+')
     ->(request){
