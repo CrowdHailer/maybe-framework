@@ -8,7 +8,7 @@ class InitialTest < MiniTest::Test
   end
 
   def test_returns_404
-    @app = Class.new(Sandwitch)
+    @app = Class.new(Sandwitch::Controller)
     get '/'
     assert_equal 404, last_response.status
   end
@@ -22,7 +22,7 @@ class InitialTest < MiniTest::Test
 
   def test_no_request_before_dup
     assert_raises AngryAccessor::InstanceVariableError do
-      Sandwitch.new.request
+      Sandwitch::Controller.new.request
     end
   end
 

@@ -1,4 +1,4 @@
-class Sandwitch
+module Sandwitch
   class Response < Rack::Response
 
   end

@@ -1,6 +1,6 @@
 require './lib/sandwitch'
 
-class Rest < Sandwitch
+class Rest < Sandwitch::Controller
   def render(arg)
     'Hello World'
   end
