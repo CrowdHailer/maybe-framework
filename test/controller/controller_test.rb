@@ -46,6 +46,22 @@ class InitialTest < MiniTest::Test
     end
   end
 
+  def test_new_sets_request
+    execution = Sandwitch::Controller.new.new(:request, :response)
+    assert_equal :request, execution.request
+  end
+
+  def test_new_sets_response
+    execution = Sandwitch::Controller.new.new(:request, :response)
+    assert_equal :response, execution.response
+  end
+
+  def test_creates_new_object_for_each_execution
+    controller = Sandwitch::Controller.new
+    execution = controller.new(:request, :response)
+    refute_equal controller.object_id, execution.object_id
+  end
+
   def test_method_missing_when_no_matcher
     err = assert_raises NoMethodError do
       Sandwitch::Controller.new.pointless
