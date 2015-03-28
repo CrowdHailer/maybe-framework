@@ -102,6 +102,14 @@ module Matchers
     def match?
       request.get?
     end
+
+    def match_path
+      true
+    end
+
+    def match_params
+      true
+    end
   end
 end
 
@@ -117,5 +125,23 @@ class App < Sandwitch
 end
 
 class Rest < Sandwitch
-
+  # on get, index do ||
+  #   @items = Items.all
+  #   response.body = [render :index]
+  # end
+  #
+  # on get, segment('/new'), :action => :new
+  # def new
+  #   ok :new
+  # end
+  #
+  # on post, root, params(:item), authenticated do |item_params, user|
+  #   form = Item::Create::Form.new item_params
+  #   Items::Create.call(form, user) do |on|
+  #     on.created do |item|
+  #       response.status = 201
+  #       response << :location => "/items/#{item.id}"
+  #     end
+  #   end
+  # end
 end
