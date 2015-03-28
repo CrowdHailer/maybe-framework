@@ -14,6 +14,8 @@ class Sandwitch
     @app = app
   end
 
+  attr_reader :app
+
   def self.call(env)
     new.call(env)
   end
@@ -36,7 +38,7 @@ class Sandwitch
   end
 
   def call(env)
-    new(Request.new(env), Response.new).respond || @app.call(env)
+    new(Request.new(env), Response.new).respond || app.call(env)
   end
 
   def respond
@@ -69,8 +71,11 @@ end
 
 class App < Sandwitch
   on get? do |a|
-    ap a
     response.body = ['Hello World']
   end
+
+end
+
+class Rest < Sandwitch
 
 end
