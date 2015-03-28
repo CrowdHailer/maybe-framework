@@ -2,9 +2,9 @@ APP_ROOT = File.expand_path('../', __FILE__)
 Dir[APP_ROOT + '/lib/*.rb'].each {|file| require file }
 
 class Sandwitch
+  extend AngryAccessor
   Request = Class.new(Rack::Request)
   Response = Class.new(Rack::Response)
-  # Angry reader
   UndefinedRequest = Class.new(StandardError)
   UndefinedRespone = Class.new(StandardError)
 
@@ -12,19 +12,11 @@ class Sandwitch
     @app = app
   end
 
-  attr_reader :app
   attr_writer :request, :response
+  attr_fetcher :request, :response, :app
 
   def self.call(env)
     new.call(env)
-  end
-
-  def response
-    @response || (raise UndefinedRespone, 'There is no response object available')
-  end
-
-  def request
-    @request || (raise UndefinedRequest, 'There is no request object available')
   end
 
   def new(request, response)

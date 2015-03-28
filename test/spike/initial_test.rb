@@ -21,7 +21,7 @@ class InitialTest < MiniTest::Test
   end
 
   def test_no_request_before_dup
-    assert_raises Sandwitch::UndefinedRequest do
+    assert_raises AngryAccessor::InstanceVariableError do
       Sandwitch.new.request
     end
   end
