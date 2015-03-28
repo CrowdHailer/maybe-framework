@@ -9,7 +9,7 @@ class Sandwitch
     end
 
     def on(*args, &action)
-      routes << [args, action]
+      routes << [Matchers.Group(*args), action]
     end
 
     def routes
@@ -19,9 +19,6 @@ class Sandwitch
     def method_missing(meth, *args, &block)
       begin
         matcher = Matchers.send(meth.capitalize, *args)
-        # ->(request){
-        #   matcher.new(request).match?
-        # }
       rescue NameError
         super
       end
@@ -52,23 +49,14 @@ class Sandwitch
   end
 
   def respond
-    routes.each do |conditions, action|
-      group_matcher = Matchers.Group(*conditions).new(request)
-      # ap group_matcher.match?
-      # captures = conditions.map{|part| part.call(request)}
+    routes.each do |matcher, action|
+      group_matcher = matcher.new(request)
       if group_matcher.match?
-        self.instance_exec *[], &action
+        self.instance_exec *['3'], &action
         return response
       end
     end
     return nil
-
-    routes.each do |matcher, action|
-      m = matcher.new(request)
-      if m.match_all?
-        self.instance_exec *match.captures, &action
-      end
-    end
   end
 end
 
