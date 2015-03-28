@@ -67,11 +67,21 @@ class Sandwitch
     }
   end
 
+  def self.head?
+    ->(request){
+      request.head?
+    }
+  end
+
 end
 
 class App < Sandwitch
   on get? do |a|
     response.body = ['Hello World']
+  end
+
+  on head? do |a|
+    
   end
 
 end

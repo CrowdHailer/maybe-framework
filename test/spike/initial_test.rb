@@ -26,6 +26,12 @@ class InitialTest < MiniTest::Test
     end
   end
 
+  def test_head_no_body
+    @app = App
+    head '/'
+    assert_equal '', last_response.body
+  end
+
   # def test_ideal
   #   context = Context.new(mock_request, mock_response)
   #   context.respond
