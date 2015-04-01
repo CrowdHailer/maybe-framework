@@ -1,12 +1,26 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    ansi (1.5.0)
     awesome_print (1.6.1)
+    builder (3.2.2)
+    minitest (5.5.1)
+    minitest-reporters (1.0.11)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
     rack (1.6.0)
+    rack-test (0.6.3)
+      rack (>= 1.0)
+    ruby-progressbar (1.7.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   awesome_print
+  minitest
+  minitest-reporters
   rack
+  rack-test
