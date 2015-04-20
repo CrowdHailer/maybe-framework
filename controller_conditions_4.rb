@@ -15,4 +15,23 @@ class App < Sandwitch::Controller
     post segment('new'), params('post'), &execute(:create)
     on get, identity, &execute(:show)
   end
+
+  route :index do |request, captures|
+    if request.path_info == '/'
+      return request, []
+    else
+      return false,  []
+    end
+  end
+
+  route :show
+
+
+  on route.method('GET').path('users'), &method(:index)
+
+  def get path
+    route.method(GET).path(path)
+
+  end
+
 end
